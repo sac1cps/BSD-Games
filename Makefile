@@ -11,7 +11,6 @@ SUBDIR= adventure \
 	bcd \
 	bs \
 	caesar \
-	ching \
 	canfield \
 	cribbage \
 	dab \
@@ -44,8 +43,22 @@ SUBDIR= adventure \
 	wtf \
 	wump
 
-# maximum parallelism
-#
-SUBDIR_ORDERED=
+all:
+	@for dir in $(SUBDIR); do \
+		echo "Building $$dir..."; \
+		(cd $$dir && make); \
+	done
 
-.include <bsd.subdir.mk>
+install:
+	@for dir in $(SUBDIR); do \
+		echo "Installing $$dir..."; \
+		(cd $$dir && make install); \
+	done
+
+clean:
+	@for dir in $(SUBDIR); do \
+		echo "Cleaning $$dir..."; \
+		(cd $$dir && make clean); \
+	done
+
+.PHONY: all install clean

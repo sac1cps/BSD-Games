@@ -35,7 +35,7 @@ if [ -z "$1" ]; then
 fi
 
 if [ -z "$acronyms" ]; then
-	acronyms=${ACRONYMDB:-$(ls /usr/local/share/games/acronyms* 2>/dev/null)}
+	acronyms=${ACRONYMDB:-$(ls /Users/osxi/.local/share/games/acronyms* 2>/dev/null)}
 fi
 
 if [ -z "$acronyms" ]; then

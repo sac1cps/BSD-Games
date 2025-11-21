@@ -59,8 +59,7 @@ const int	weight[5] = { 0, 1, 7, 22, 100 };
  *	TIE	The game is a tie.
  */
 int
-makemove(us, mv)
-	int us, mv;
+makemove(int us, int mv)
 {
 	struct spotstr *sp, *fsp;
 	union comboval *cp;
@@ -217,8 +216,7 @@ makemove(us, mv)
  * fix up the overlap array due to updating spot osp.
  */
 void
-update_overlap(osp)
-	struct spotstr *osp;
+update_overlap(struct spotstr *osp)
 {
 	struct spotstr *sp, *sp1, *sp2;
 	int i, f, r, r1, d, d1, n;

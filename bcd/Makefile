@@ -1,18 +1,29 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/bcd/Makefile,v 1.2.6.2 2001/04/25 09:28:45 ru Exp $
-# $DragonFly: src/games/bcd/Makefile,v 1.4 2006/10/08 16:22:35 pavalos Exp $
+# Makefile for bcd
 
-PROG=	bcd
-MAN=	bcd.6
-MLINKS=	bcd.6 ppt.6
+PROG=bcd
+SRCS=bcd.c
+MAN=bcd.6
+MLINKS=bcd.6 ppt.6
+OBJS=$(SRCS:.c=.o)
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+CFLAGS+=-O2
+LDFLAGS=
+BINDIR?=/usr/local/bin
+MANDIR?=/usr/local/man/man6
 
-.include <bsd.prog.mk>
+all: $(PROG)
 
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+	ln -sf $(MANDIR)/$(MLINKS)
+
+clean:
+	rm -f $(PROG) $(OBJS)
+
+.PHONY: all install clean

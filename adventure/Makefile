@@ -1,24 +1,33 @@
-#	@(#)Makefile	8.1 (Berkeley) 6/12/93
-# $FreeBSD: src/games/adventure/Makefile,v 1.7.6.1 2001/04/25 09:28:42 ru Exp $
-# $DragonFly: src/games/adventure/Makefile,v 1.6 2006/10/08 16:22:34 pavalos Exp $
+# Makefile for adventure
 
-PROG=	adventure
-SRCS=	main.c init.c done.c save.c subr.c vocab.c wizard.c io.c data.c crc.c
-MAN=	adventure.6
-HIDEGAME=hidegame
-CLEANFILES=data.c setup.nx setup.no
+PROG=adventure
+SRCS=main.c init.c done.c save.c subr.c vocab.c wizard.c io.c data.c crc.c
+MAN=adventure.6
+OBJS=$(SRCS:.c=.o)
 
-build-tools: setup.nx
+CFLAGS+=-O2
+LDFLAGS=
+BINDIR?=/usr/local/bin
+MANDIR?=/usr/local/man/man6
 
-data.c: glorkz setup.nx
-	./setup.nx ${.CURDIR}/glorkz > data.c
+all: $(PROG)
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
 
-.include <bsd.prog.mk>
+setup.nx: setup.c
+	$(CC) -o setup.nx setup.c
+
+data.c: setup.nx glorkz
+	./setup.nx glorkz > data.c
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS) data.c setup.nx
+
+.PHONY: all install clean

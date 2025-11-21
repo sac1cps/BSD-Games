@@ -1,13 +1,19 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
+# Simplified aggregator Makefile for GNU make
+SUBDIRS = snake snscore
 
-SUBDIR=	snake snscore
+.PHONY: all clean install
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+all:
+	@for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir; \
+	done
 
-.include <bsd.subdir.mk>
+clean:
+	@for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir clean; \
+	done
+
+install:
+	@for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir install; \
+	done

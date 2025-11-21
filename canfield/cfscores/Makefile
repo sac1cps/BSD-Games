@@ -1,9 +1,23 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $DragonFly: src/games/canfield/cfscores/Makefile,v 1.3 2006/10/08 16:22:35 pavalos Exp $
+# Makefile for cfscores
 
-PROG=	cfscores
-CFLAGS+=-I${.CURDIR}/../canfield
-NOMAN=	noman
+PROG=cfscores
+SRCS=cfscores.c
+OBJS=$(SRCS:.c=.o)
 
-.include "../../Makefile.inc"
-.include <bsd.prog.mk>
+CFLAGS+=-O2 -I../canfield
+LDFLAGS=
+BINDIR?=/usr/local/bin
+
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install $(PROG) $(BINDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)
+
+.PHONY: all install clean

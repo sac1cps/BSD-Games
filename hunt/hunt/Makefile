@@ -1,14 +1,27 @@
-#	$NetBSD: Makefile,v 1.5 1998/02/18 22:37:31 jtc Exp $
-#	$OpenBSD: Makefile,v 1.7 2002/05/23 18:43:00 deraadt Exp $
-#	$DragonFly: src/games/hunt/hunt/Makefile,v 1.1 2008/09/02 21:50:20 dillon Exp $
+# Makefile for hunt
 
-PROG=	hunt
-SRCS=	connect.c hunt.c otto.c playit.c display.c list.c
-MAN=	hunt.6
-LDADD=	-lcurses
-DPADD=	${LIBCURSES}
+PROG=hunt
+SRCS=connect.c hunt.c otto.c playit.c display.c list.c
+MAN=hunt.6
+OBJS=$(SRCS:.c=.o)
 
-CFLAGS+=-I${.CURDIR}/../huntd
+CFLAGS+=-O2 -I../huntd
+LDFLAGS=-lcurses
+BINDIR?=/usr/local/bin
+MANDIR?=/usr/local/man/man6
 
-.include "../../Makefile.inc"
-.include <bsd.prog.mk>
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)
+
+.PHONY: all install clean

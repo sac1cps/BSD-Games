@@ -1,27 +1,32 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/factor/Makefile,v 1.2.6.2 2002/10/23 14:59:14 fanf Exp $
-# $DragonFly: src/games/factor/Makefile,v 1.4 2006/10/08 16:22:35 pavalos Exp $
+# Makefile for factor
 
-PROG=	factor
-SRCS=	factor.c pr_tbl.c
-CFLAGS+=-I${.CURDIR}/../primes
+PROG=factor
+SRCS=factor.c pr_tbl.c
+MAN=factor.6
+MLINKS=factor.6 primes.6
+OBJS=factor.o pr_tbl.o
 
-.if exists(${.CURDIR}/../../crypto) && !defined(NO_OPENSSL)
-CFLAGS+=-DHAVE_OPENSSL
-LDADD+=	-lcrypto
-DPADD+=	${LIBCRYPTO}
-.endif
+CFLAGS+=-O2 -I../primes -I/opt/homebrew/opt/openssl/include
+LDFLAGS=-L/opt/homebrew/opt/openssl/lib -lcrypto
+BINDIR?=/usr/local/bin
+MANDIR?=/usr/local/man/man6
 
-MAN=	factor.6
-MLINKS+=factor.6 primes.6
-.PATH:	${.CURDIR}/../primes
+all: $(PROG)
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+$(PROG): $(OBJS)
+	$(CC) $(CFLAGS) -o $(PROG) $(OBJS) $(LDFLAGS)
 
-.include <bsd.prog.mk>
+pr_tbl.o: ../primes/pr_tbl.c
+	$(CC) $(CFLAGS) -c ../primes/pr_tbl.c -o pr_tbl.o
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+	ln -sf $(MANDIR)/$(MLINKS)
+
+clean:
+	rm -f $(PROG) $(OBJS)
+
+.PHONY: all install clean

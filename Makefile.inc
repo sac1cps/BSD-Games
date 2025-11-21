@@ -2,7 +2,7 @@
 # $FreeBSD: src/games/Makefile.inc,v 1.10.2.2 2002/02/18 16:02:39 ru Exp $
 # $DragonFly: src/games/Makefile.inc,v 1.3 2006/10/08 16:22:34 pavalos Exp $
 
-PREFIX?=	/usr/local
+PREFIX?=	/Users/osxi/.local
 BINDIR?=	${PREFIX}/bin
 SHAREDIR=	${PREFIX}/share
 MANDIR=		${SHAREDIR}/man/man

@@ -1,16 +1,24 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/number/Makefile,v 1.2.6.1 2001/04/25 09:28:59 ru Exp $
-# $DragonFly: src/games/number/Makefile,v 1.4 2006/10/08 16:22:36 pavalos Exp $
+# GNU make compatible Makefile for number
+PROG = number
+SRCS = number.c
+OBJS = $(SRCS:.c=.o)
+MAN = number.6
+CFLAGS += -O2
+BINDIR ?= /usr/local/bin
+MANDIR ?= /usr/local/man/man6
 
-PROG=	number
-MAN=	number.6
+.PHONY: all clean install
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+all: $(PROG)
 
-.include <bsd.prog.mk>
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)

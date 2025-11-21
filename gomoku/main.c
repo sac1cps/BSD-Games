@@ -82,9 +82,7 @@ const char	*plyr[2];			/* who's who */
 int	main(int, char *[]);
 
 int
-main(argc, argv)
-	int argc;
-	char **argv;
+main(int argc, char **argv)
 {
 	char buf[128];
 	int color, curmove, i, ch;
@@ -335,8 +333,7 @@ again:
 }
 
 int
-readinput(fp)
-	FILE *fp;
+readinput(FILE *fp)
 {
 	char *cp;
 	int c;
@@ -353,8 +350,7 @@ readinput(fp)
  * Handle strange situations.
  */
 void
-whatsup(signum)
-	int signum;
+whatsup(int signum)
 {
 	int i, pnum, n, s1, s2, d1, d2;
 	struct spotstr *sp;
@@ -495,8 +491,7 @@ syntax:
  * Display debug info.
  */
 void
-dlog(str)
-	const char *str;
+dlog(const char *str)
 {
 
 	if (debugfp)
@@ -508,8 +503,7 @@ dlog(str)
 }
 
 void
-glog(str)
-	const char *str;
+glog(const char *str)
 {
 
 	if (debugfp)
@@ -531,8 +525,7 @@ quit()
 }
 
 void
-quitsig(dummy)
-	int dummy __attribute__((__unused__));
+quitsig(int dummy __attribute__((__unused__)))
 {
 	quit();
 }
@@ -541,8 +534,7 @@ quitsig(dummy)
  * Die gracefully.
  */
 void
-panic(str)
-	const char *str;
+panic(const char *str)
 {
 	fprintf(stderr, "%s: %s\n", prog, str);
 	fputs("resign\n", stdout);

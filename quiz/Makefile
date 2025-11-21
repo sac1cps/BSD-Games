@@ -1,28 +1,24 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/quiz/Makefile,v 1.5.6.3 2002/02/18 16:02:43 ru Exp $
-# $DragonFly: src/games/quiz/Makefile,v 1.4 2006/10/08 16:22:36 pavalos Exp $
+# GNU make compatible Makefile for quiz
+PROG = quiz
+SRCS = quiz.c rxp.c
+OBJS = $(SRCS:.c=.o)
+MAN = quiz.6
+CFLAGS += -O2
+BINDIR ?= /usr/local/bin
+MANDIR ?= /usr/local/man/man6
 
-PROG=	quiz
-SRCS=	quiz.c rxp.c
-MAN=	quiz.6
-FILES=	africa america areas arith asia babies bard chinese collectives \
-	ed elements europe flowers greek inca index latin locomotive \
-	midearth morse murders poetry posneg pres province seq-easy seq-hard \
-	sexes sov spell state trek ucc
-FILESDIR=	${SHAREDIR}/games/quiz.db
-HIDEGAME=hidegame
+.PHONY: all clean install
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${FILESDIR})
-	mkdir -p ${FILESDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+all: $(PROG)
 
-.PATH: ${.CURDIR}/datfiles
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
 
-.include <bsd.prog.mk>
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)

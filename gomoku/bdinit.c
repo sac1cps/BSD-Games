@@ -45,8 +45,7 @@ __RCSID("$NetBSD: bdinit.c,v 1.5 2003/08/07 09:37:15 agc Exp $");
 #include "gomoku.h"
 
 void
-bdinit(bp)
-	struct spotstr *bp;
+bdinit(struct spotstr *bp)
 {
 	int i, j, r;
 	struct spotstr *sp;
@@ -172,7 +171,7 @@ bdinit(bp)
  * common open spaces shared between the two frames.
  */
 void
-init_overlap()
+init_overlap(void)
 {
 	struct spotstr *sp1, *sp2;
 	struct combostr *cbp;

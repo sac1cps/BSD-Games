@@ -1,11 +1,25 @@
-#	$NetBSD: Makefile,v 1.1 1999/07/22 01:03:20 mrg Exp $
+# GNU make compatible Makefile for wtf script
+SCRIPT = wtf
+DATA_FILES = acronyms acronyms.comp
+MAN = wtf.6
+BINDIR ?= /usr/local/bin
+DATADIR ?= /usr/local/share/games
+MANDIR ?= /usr/local/share/man/man6
 
-SCRIPTS=	wtf
-SCRIPTSDIR=	${PREFIX}/bin
-SHAREDIR?=	${PREFIX}/share
-MANDIR?=	${SHAREDIR}/man/man
-FILES= 		acronyms acronyms.comp
-FILESDIR?=	${SHAREDIR}/games
-MAN=		wtf.6
+.PHONY: all clean install
 
-.include <bsd.prog.mk>
+all:
+	@:
+
+install:
+	install -d $(BINDIR)
+	install -d $(DATADIR)
+	install -d $(MANDIR)
+	install -m 755 $(SCRIPT) $(BINDIR)
+	for f in $(DATA_FILES); do \
+		install -m 644 $$f $(DATADIR); \
+	done
+	install -m 644 $(MAN) $(MANDIR)
+
+clean:
+	@:

@@ -1,5 +1,5 @@
 #!/bin/sh
-HACKDIR=/usr/local/var/games/hackdir
+HACKDIR=/Users/osxi/.local/var/games/hackdir
 HACK=$HACKDIR/hack
 MAXNROFPLAYERS=4
 

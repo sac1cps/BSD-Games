@@ -66,8 +66,8 @@
 #	@(#)ching.sh	8.1 (Berkeley) 5/31/93
 #
 
-SHARE=/usr/local/share/games
-PROGS=/usr/local/bin
+SHARE=/Users/osxi/.local/share/games
+PROGS=/Users/osxi/.local/bin
 
 case $1 in
 	[6-9]*)	HEXAGRAM=$1; shift;;

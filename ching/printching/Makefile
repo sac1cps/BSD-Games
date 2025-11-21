@@ -1,7 +1,20 @@
-#	$NetBSD: Makefile,v 1.1 2005/06/30 13:30:33 perry Exp $
+# GNU make compatible Makefile for printching
+PROG = printching
+SRCS = printching.c
+OBJS = $(SRCS:.c=.o)
+CFLAGS += -O2
+BINDIR ?= /usr/local/bin
 
-PROG=	printching
-NOMAN=	# defined
-BINDIR?= ${PREFIX}/bin
+.PHONY: all clean install
 
-.include <bsd.prog.mk>
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install $(PROG) $(BINDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)

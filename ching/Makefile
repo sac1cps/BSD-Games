@@ -1,5 +1,19 @@
-#	$NetBSD: Makefile,v 1.1 2005/06/30 13:30:33 perry Exp $
+# Simplified aggregator Makefile for GNU make
+SUBDIRS = ching castching printching
 
-SUBDIR=	ching castching printching
+.PHONY: all clean install
 
-.include <bsd.subdir.mk>
+all:
+	@for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir; \
+	done
+
+clean:
+	@for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir clean; \
+	done
+
+install:
+	@for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir install; \
+	done

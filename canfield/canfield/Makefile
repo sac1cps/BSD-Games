@@ -1,19 +1,29 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/canfield/canfield/Makefile,v 1.5.2.3 2002/08/07 16:31:41 ru Exp $
-# $DragonFly: src/games/canfield/canfield/Makefile,v 1.4 2006/10/08 16:22:35 pavalos Exp $
+# Makefile for canfield
 
-PROG=	canfield
-MAN=	canfield.6
-DPADD=	${LIBCURSES}
-LDADD=	-lcurses
-HIDEGAME=hidegame
-MLINKS=	canfield.6 cfscores.6
+PROG=canfield
+SRCS=canfield.c
+MAN=canfield.6
+MLINKS=canfield.6 cfscores.6
+OBJS=$(SRCS:.c=.o)
 
-beforeinstall:
-.if !exists(${VARDIR}/cfscores)
-	${INSTALL} -o ${BINOWN} -g ${BINGRP} -m 664 /dev/null \
-	    ${VARDIR}/cfscores
-.endif
+CFLAGS+=-O2
+LDFLAGS=-lcurses
+BINDIR?=/usr/local/bin
+MANDIR?=/usr/local/man/man6
 
-.include "../../Makefile.inc"
-.include <bsd.prog.mk>
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+	ln -sf $(MANDIR)/$(MLINKS)
+
+clean:
+	rm -f $(PROG) $(OBJS)
+
+.PHONY: all install clean

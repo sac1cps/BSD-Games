@@ -35,4 +35,4 @@
  *	@(#)pathnames.h	8.1 (Berkeley) 5/31/93
  */
 
-#define	_PATH_HEX	"/usr/local/share/games/hexagrams"
+#define	_PATH_HEX	"/Users/osxi/.local/share/games/hexagrams"

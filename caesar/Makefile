@@ -1,20 +1,31 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/caesar/Makefile,v 1.4.6.2 2001/04/25 14:03:58 ru Exp $
-# $DragonFly: src/games/caesar/Makefile,v 1.4 2006/10/08 16:22:35 pavalos Exp $
+# Makefile for caesar
 
-PROG=	caesar
-DPADD=	${LIBM}
-LDADD=	-lm
+PROG=caesar
+SRCS=caesar.c
+MAN=caesar.6
+MLINKS=caesar.6 rot13.6
+OBJS=$(SRCS:.c=.o)
 SCRIPTS=rot13.sh
-MAN=	caesar.6
-MLINKS=	caesar.6 rot13.6
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+CFLAGS+=-O2
+LDFLAGS=-lm
+BINDIR?=/usr/local/bin
+MANDIR?=/usr/local/man/man6
 
-.include <bsd.prog.mk>
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+	install -m 755 $(SCRIPTS) $(BINDIR)/rot13
+	ln -sf $(MANDIR)/$(MLINKS)
+
+clean:
+	rm -f $(PROG) $(OBJS)
+
+.PHONY: all install clean

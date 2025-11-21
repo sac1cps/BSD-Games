@@ -1,29 +1,27 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/battlestar/Makefile,v 1.5.2.3 2002/08/07 16:31:41 ru Exp $
+# Makefile for battlestar
 
-PROG=	battlestar
-SRCS=	battlestar.c command1.c command2.c command3.c command4.c \
-	command5.c command6.c command7.c \
-	init.c cypher.c getcom.c parse.c room.c save.c fly.c misc.c \
-	globals.c dayfile.c nightfile.c dayobjs.c nightobjs.c words.c
-MAN=	battlestar.6
-DPADD=	${LIBCURSES} ${LIBTERMCAP}
-LDADD=	-lcurses -ltermcap
-HIDEGAME=hidegame
+PROG=battlestar
+SRCS=battlestar.c command1.c command2.c command3.c command4.c command5.c command6.c command7.c init.c cypher.c getcom.c parse.c room.c save.c fly.c misc.c globals.c dayfile.c nightfile.c dayobjs.c nightobjs.c words.c
+MAN=battlestar.6
+OBJS=$(SRCS:.c=.o)
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${VARDIR})
-	mkdir -p ${VARDIR}
-.endif
-.if !exists(${VARDIR}/battlestar.log)
-	${INSTALL} -o ${BINOWN} -g ${BINGRP} -m 664 /dev/null \
-	    ${VARDIR}/battlestar.log
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+CFLAGS+=-O2
+LDFLAGS=-lcurses -ltermcap
+BINDIR?=/usr/local/bin
+MANDIR?=/usr/local/man/man6
 
-.include <bsd.prog.mk>
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)
+
+.PHONY: all install clean

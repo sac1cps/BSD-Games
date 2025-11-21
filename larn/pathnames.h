@@ -30,8 +30,8 @@
  * $DragonFly: src/games/larn/pathnames.h,v 1.2 2006/08/26 17:05:05 pavalos Exp $
  */
 
-#define	_PATH_LOG		"/usr/local/var/games/larn/llog12.0"
-#define	_PATH_SCORE		"/usr/local/var/games/larn/lscore12.0"
-#define	_PATH_HELP		"/usr/local/share/games/larn/larn.help"
-#define	_PATH_LEVELS		"/usr/local/share/games/larn/larnmaze"
-#define	_PATH_PLAYERIDS		"/usr/local/var/games/larn/playerids"
+#define	_PATH_LOG		"/Users/osxi/.local/var/games/larn/llog12.0"
+#define	_PATH_SCORE		"/Users/osxi/.local/var/games/larn/lscore12.0"
+#define	_PATH_HELP		"/Users/osxi/.local/share/games/larn/larn.help"
+#define	_PATH_LEVELS		"/Users/osxi/.local/share/games/larn/larnmaze"
+#define	_PATH_PLAYERIDS		"/Users/osxi/.local/var/games/larn/playerids"

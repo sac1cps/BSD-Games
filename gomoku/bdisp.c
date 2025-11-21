@@ -117,8 +117,7 @@ bdisp_init()
  * Update who is playing whom.
  */
 void
-bdwho(update)
-	int update;
+bdwho(int update)
 {
 	int i;
 
@@ -169,8 +168,7 @@ bdisp()
  * Dump board display to a file.
  */
 void
-bdump(fp)
-	FILE *fp;
+bdump(FILE *fp)
 {
 	int i, j, c;
 	struct spotstr *sp;
@@ -208,8 +206,7 @@ bdump(fp)
  * Display a transcript entry
  */
 void
-dislog(str)
-	const char *str;
+dislog(const char *str)
 {
 
 	if (++lastline >= SCRNH - 1) {
@@ -228,8 +225,7 @@ dislog(str)
  */
 
 void
-ask(str)
-	const char *str;
+ask(const char *str)
 {
 	int len = strlen(str);
 
@@ -241,9 +237,7 @@ ask(str)
 }
 
 int
-g_getline(buf, size)
-	char *buf;
-	int size;
+g_getline(char *buf, int size)
 {
 	char *cp, *end;
 	int c;

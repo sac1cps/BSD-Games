@@ -1,15 +1,20 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-#
-# $DragonFly: src/games/ppt/Makefile,v 1.4 2006/10/08 16:22:36 pavalos Exp $
-#
+# GNU make compatible Makefile for ppt
+PROG = ppt
+SRCS = ppt.c
+OBJS = $(SRCS:.c=.o)
+CFLAGS += -O2
+BINDIR ?= /usr/local/bin
 
-PROG=	ppt
-NO_MAN=	noman
+.PHONY: all clean install
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
+all: $(PROG)
 
-.include <bsd.prog.mk>
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
 
+install: $(PROG)
+	install -d $(BINDIR)
+	install $(PROG) $(BINDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)

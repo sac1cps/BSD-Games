@@ -1,32 +1,32 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/cribbage/Makefile,v 1.7.2.5 2002/08/07 16:31:41 ru Exp $
-# $DragonFly: src/games/cribbage/Makefile,v 1.4 2006/10/08 16:22:35 pavalos Exp $
+# Makefile for cribbage
 
-PROG=	cribbage
-DPADD=	${LIBCURSES}
-LDADD=	-lcurses
-SRCS=	extern.c crib.c cards.c instr.c io.c score.c support.c
-FILES=	cribbage.n
-FILESNAME_cribbage.n=	cribbage.instr
-MAN=	cribbage.6
-HIDEGAME=hidegame
+PROG=cribbage
+SRCS=extern.c crib.c cards.c instr.c io.c score.c support.c
+MAN=cribbage.6
+OBJS=$(SRCS:.c=.o)
+FILES=cribbage.n
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${FILESDIR})
-	mkdir -p ${FILESDIR}
-.endif
-.if !exists(${VARDIR})
-	mkdir -p ${VARDIR}
-.endif
-.if !exists(${VARDIR}/criblog)
-	${INSTALL} -o ${BINOWN} -g ${BINGRP} -m 664 /dev/null \
-	    ${VARDIR}/criblog
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+CFLAGS+=-O2
+LDFLAGS=-lcurses
+BINDIR?=/usr/local/bin
+MANDIR?=/usr/local/man/man6
+SHAREDIR?=/usr/local/share
+FILESDIR?=$(SHAREDIR)/games
 
-.include <bsd.prog.mk>
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install -d $(FILESDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+	install -m 644 $(FILES) $(FILESDIR)/cribbage.instr
+
+clean:
+	rm -f $(PROG) $(OBJS)
+
+.PHONY: all install clean

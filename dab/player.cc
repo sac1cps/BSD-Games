@@ -55,6 +55,8 @@ PLAYER::PLAYER(char who) :
 {
 }
 
+PLAYER::~PLAYER() = default;
+
 void PLAYER::init(void)
 {
     _score = 0;

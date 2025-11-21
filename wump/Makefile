@@ -1,21 +1,28 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/wump/Makefile,v 1.3.6.3 2002/02/18 16:02:43 ru Exp $
-# $DragonFly: src/games/wump/Makefile,v 1.4 2006/10/08 16:22:36 pavalos Exp $
+# GNU make compatible Makefile for wump
+PROG = wump
+SRCS = wump.c
+OBJS = $(SRCS:.c=.o)
+MAN = wump.6
+DATA_FILES = wump.info
+CFLAGS += -O2
+BINDIR ?= /usr/local/bin
+MANDIR ?= /usr/local/man/man6
+DATADIR ?= /usr/local/share/games
 
-PROG=	wump
-FILES=	wump.info
-MAN=	wump.6
-HIDEGAME=hidegame
+.PHONY: all clean install
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${FILESDIR})
-	mkdir -p ${FILESDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+all: $(PROG)
 
-.include <bsd.prog.mk>
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install -d $(DATADIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+	install -m 644 $(DATA_FILES) $(DATADIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)

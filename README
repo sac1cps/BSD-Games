@@ -83,7 +83,7 @@ releases in my experience). Newer versions get tested when I get around to
 upgrading one of my Macs.
 
 Installation is pretty basic. The steps are to run "bsdmake", then "sudo 
-bsdmake install", and it will install in /usr/local (or elsewhere, if you edit 
+bsdmake install", and it will install in /Users/osxi/.local (or elsewhere, if you edit 
 the Makefile). Homebrew formulae are available in the Homebrew/ directory to
 make installing bsdgames-osx easier, as well as a more general homebrew tap for
 some of my programs at https://github.com/ctdk/homebrew-ctdk that includes
@@ -94,8 +94,8 @@ BUGS
 Currently, to the best of my knowledge, all games are building correctly.
 
 Many of these programs have hard coded paths. Currently all of them are now
-changed to sensible defaults under /usr/local, but if you want to install 
-somewhere that *isn't* /usr/local, you'll need to find and update the paths.
+changed to sensible defaults under /Users/osxi/.local, but if you want to install 
+somewhere that *isn't* /Users/osxi/.local, you'll need to find and update the paths.
 
 morse and piano have been removed because they depend on sound stuff that's not 
 readily available on OS X. dm was removed because, well, no one would want to
@@ -107,7 +107,7 @@ has its own homebrew formula. It's best not to duplicate it here.
 If you use the bsdmake in /usr/bin on 10.7 (and probably before), it will try
 to install as root by default. Either install the bsdmake from homebrew and use
 the homebrew version (you'll need to directly use the version in 
-/usr/local/Cellar) or set BINOWN, BINGRP, LIBOWN, LIBGRP, etc. to the user and
+/Users/osxi/.local/Cellar) or set BINOWN, BINGRP, LIBOWN, LIBGRP, etc. to the user and
 groups you want.
 
 COPYRIGHT

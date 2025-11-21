@@ -1,15 +1,21 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $DragonFly: src/games/primes/Makefile,v 1.3 2006/10/08 16:22:36 pavalos Exp $
+# GNU make compatible Makefile for primes
+PROG = primes
+SRCS = pattern.c pr_tbl.c primes.c
+OBJS = $(SRCS:.c=.o)
+CFLAGS += -O2
+LDLIBS += -lm
+BINDIR ?= /usr/local/bin
 
-PROG=	primes
-SRCS=	pattern.c pr_tbl.c primes.c
-NO_MAN=	noman
-DPADD=	${LIBM}
-LDADD=	-lm
+.PHONY: all clean install
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
+all: $(PROG)
 
-.include <bsd.prog.mk>
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install $(PROG) $(BINDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)

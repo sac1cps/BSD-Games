@@ -1,16 +1,19 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/wargames/Makefile,v 1.7.2.3 2001/04/25 14:04:02 ru Exp $
-# $DragonFly: src/games/wargames/Makefile,v 1.2 2003/06/17 04:25:25 dillon Exp $
+# GNU make compatible Makefile for wargames script
+SCRIPT = wargames.sh
+MAN = wargames.6
+BINDIR ?= /usr/local/bin
+MANDIR ?= /usr/local/man/man6
 
-SCRIPTS=wargames.sh
-MAN=	wargames.6
+.PHONY: all clean install
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+all:
+	@:
 
-.include <bsd.prog.mk>
+install:
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install -m 755 $(SCRIPT) $(BINDIR)/wargames
+	install -m 644 $(MAN) $(MANDIR)
+
+clean:
+	@:

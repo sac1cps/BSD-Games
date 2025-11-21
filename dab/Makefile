@@ -1,20 +1,28 @@
-#	$NetBSD: Makefile,v 1.3 2004/01/05 15:35:59 christos Exp $
+# Makefile for dab
 
-WARNS=0
-DPADD+=${LIBCURSES} ${LIBTERMCAP} ${LIBM}
-LDADD+=-lcurses -ltermcap -lm
-
-PROG_CXX=dab
+PROG=dab
+SRCS=algor.cc board.cc main.cc human.cc box.cc player.cc gamescreen.cc ttyscrn.cc random.cc
 MAN=dab.6
-SRCS=algor.cc board.cc main.cc human.cc box.cc player.cc gamescreen.cc \
-    ttyscrn.cc random.cc
+OBJS=$(SRCS:.cc=.o)
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+CXX=g++
+CXXFLAGS+=-O2 -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1
+LDFLAGS=-lcurses -ltermcap -lm
+BINDIR?=/usr/local/bin
+MANDIR?=/usr/local/man/man6
 
-.include <bsd.prog.mk>
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(PROG) $(OBJS) $(LDFLAGS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)
+
+.PHONY: all install clean

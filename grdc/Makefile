@@ -1,17 +1,27 @@
-# $FreeBSD: src/games/grdc/Makefile,v 1.4.2.2 2001/10/02 11:51:49 ru Exp $
-# $DragonFly: src/games/grdc/Makefile,v 1.4 2006/10/08 16:22:35 pavalos Exp $
+# Makefile for grdc
 
-PROG=   grdc
-MAN=   grdc.6
-DPADD=  ${LIBNCURSES}
-LDADD=  -lncurses
+PROG=grdc
+SRCS=grdc.c
+MAN=grdc.6
+OBJS=$(SRCS:.c=.o)
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+CFLAGS+=-O2
+LDFLAGS=-lncurses
+BINDIR?=/usr/local/bin
+MANDIR?=/usr/local/man/man6
 
-.include <bsd.prog.mk>
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)
+
+.PHONY: all install clean

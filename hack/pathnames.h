@@ -30,6 +30,6 @@
  */
 
 #define	_PATH_MAIL	"/usr/bin/mail"
-#define	_PATH_QUEST	"/usr/local/var/games/questdir"
-#define	_PATH_HACK	"/usr/local/var/games/hackdir"
+#define	_PATH_QUEST	"/Users/smithfamily/.local/var/games/questdir"
+#define	_PATH_HACK	"/Users/smithfamily/.local/var/games/hackdir"
 

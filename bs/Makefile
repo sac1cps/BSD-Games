@@ -1,18 +1,27 @@
-# $FreeBSD: src/games/bs/Makefile,v 1.5.2.1 2001/04/25 09:28:49 ru Exp $
-# $DragonFly: src/games/bs/Makefile,v 1.4 2006/10/08 16:22:35 pavalos Exp $
+# Makefile for bs
 
-PROG=   bs
-MAN=   bs.6
-DPADD=  ${LIBNCURSES}
-LDADD=  -lncurses
-HIDEGAME=hidegame
+PROG=bs
+SRCS=bs.c
+MAN=bs.6
+OBJS=$(SRCS:.c=.o)
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+CFLAGS+=-O2
+LDFLAGS=-lncurses
+BINDIR?=/usr/local/bin
+MANDIR?=/usr/local/man/man6
 
-.include <bsd.prog.mk>
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)
+
+.PHONY: all install clean

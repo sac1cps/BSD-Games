@@ -1,16 +1,24 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $DragonFly: src/games/backgammon/teachgammon/Makefile,v 1.3 2006/10/08 16:22:35 pavalos Exp $
+# GNU make compatible Makefile for teachgammon
+VPATH = ../common_source
 
-PROG=	teachgammon
-CFLAGS+=-DTEACHGAMMON_TEXT -I${.CURDIR}/../common_source
-SRCS=	allow.c board.c check.c data.c fancy.c init.c odds.c one.c save.c \
-	subs.c table.c teach.c ttext1.c ttext2.c tutor.c
-DPADD=	${LIBTERMCAP}
-LDADD=	-ltermcap
-HIDEGAME=hidegame
-NOMAN=	noman
+PROG = teachgammon
+SRCS = allow.c board.c check.c data.c fancy.c init.c odds.c one.c \
+	save.c subs.c table.c teach.c ttext1.c ttext2.c tutor.c
+OBJS = $(SRCS:.c=.o)
+CFLAGS += -O2 -DTEACHGAMMON_TEXT -I../common_source
+LDLIBS += -ltermcap
+BINDIR ?= /usr/local/bin
 
-.PATH:	${.CURDIR}/../common_source
+.PHONY: all clean install
 
-.include "../../Makefile.inc"
-.include <bsd.prog.mk>
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install $(PROG) $(BINDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)

@@ -1,29 +1,50 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/atc/Makefile,v 1.14.2.3 2002/02/18 16:02:41 ru Exp $
-# $DragonFly: src/games/atc/Makefile,v 1.4 2006/10/08 16:22:35 pavalos Exp $
+# Makefile for atc
 
-PROG=	atc
-CFLAGS+=-I${.CURDIR} -I.
-SRCS=	extern.c grammar.y graphics.c input.c lex.l list.c log.c \
-	main.c tunable.c update.c y.tab.h
-MAN=	atc.6
-DPADD=	${LIBL} ${LIBM} ${LIBCURSES}
-LDADD=	-ll -lm -lcurses
-FILES=  Game_List Killer crossover default easy game_2
-FILESDIR=	${SHAREDIR}/games/atc
-HIDEGAME=hidegame
+PROG=atc
+SRCS=extern.c graphics.c input.c list.c log.c main.c tunable.c update.c
+MAN=atc.6
+OBJS=$(SRCS:.c=.o) grammar.o lex.o
 
-.PATH: ${.CURDIR}/games
+CFLAGS+=-O2 -I.
+LDFLAGS=-ll -lm -lcurses
+BINDIR?=/usr/local/bin
+MANDIR?=/usr/local/man/man6
+SHAREDIR?=/usr/local/share
+FILESDIR?=$(SHAREDIR)/games/atc
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${FILESDIR})
-	mkdir -p ${FILESDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+FILES=Game_List Killer crossover default easy game_2
 
-.include <bsd.prog.mk>
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
+
+lex.c: lex.l
+	lex -o lex.c lex.l
+
+lex.o: lex.c y.tab.h
+	$(CC) $(CFLAGS) -c lex.c
+
+y.tab.h: grammar.y
+	/opt/homebrew/opt/bison/bin/bison -d -o y.tab.c grammar.y
+
+grammar.c: grammar.y
+	/opt/homebrew/opt/bison/bin/bison -o grammar.c grammar.y
+
+grammar.o: grammar.c
+	$(CC) $(CFLAGS) -c grammar.c
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install -d $(FILESDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+	for file in $(FILES); do \
+		install -m 644 games/$$file $(FILESDIR); \
+	done
+
+clean:
+	rm -f $(PROG) $(OBJS) lex.c grammar.c y.tab.h
+
+.PHONY: all install clean

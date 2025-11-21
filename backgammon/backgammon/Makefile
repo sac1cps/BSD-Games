@@ -1,16 +1,28 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/backgammon/backgammon/Makefile,v 1.2.14.1 2001/04/25 09:28:44 ru Exp $
-# $DragonFly: src/games/backgammon/backgammon/Makefile,v 1.4 2006/10/08 16:22:35 pavalos Exp $
+# GNU make compatible Makefile for backgammon
+VPATH = ../common_source
 
-PROG=	backgammon
-CFLAGS+=-I${.CURDIR}/../common_source
-SRCS=	allow.c board.c check.c extra.c fancy.c init.c main.c move.c \
+PROG = backgammon
+SRCS = allow.c board.c check.c extra.c fancy.c init.c main.c move.c \
 	odds.c one.c save.c subs.c table.c text.c version.c
-MAN=	backgammon.6
-DPADD=	${LIBTERMCAP}
-LDADD=	-ltermcap
-.PATH:	${.CURDIR}/../common_source
-HIDEGAME=hidegame
+OBJS = $(SRCS:.c=.o)
+MAN = backgammon.6
+CFLAGS += -O2 -I../common_source
+LDLIBS += -ltermcap
+BINDIR ?= /usr/local/bin
+MANDIR ?= /usr/local/man/man6
 
-.include "../../Makefile.inc"
-.include <bsd.prog.mk>
+.PHONY: all clean install
+
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)

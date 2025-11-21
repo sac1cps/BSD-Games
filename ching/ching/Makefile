@@ -1,24 +1,25 @@
-#	$NetBSD: Makefile,v 1.2 2008/10/30 21:37:55 mrg Exp $
+# GNU make compatible Makefile for ching script
+SCRIPT = ching.sh
+MAN = ching.6
+DATA_FILES = hexagrams macros
+BINDIR ?= /usr/local/bin
+DATADIR ?= /usr/local/share/games
+MANDIR ?= /usr/local/share/man/man6
 
-SCRIPTS=ching.sh
-MAN=	ching.6
+.PHONY: all clean install
 
-#.include <bsd.own.mk>
+all:
+	@:
 
-SHAREDIR=	${PREFIX}/share
-FILES=	hexagrams macros
-FILESDIR?= ${SHAREDIR}/games
-MANDIR=		${SHAREDIR}/man/man
-FILESGRP= ${BINGRP}
-SHAREGRP= ${BINGRP}
-MANGRP= ${BINGRP}
+install:
+	install -d $(BINDIR)
+	install -d $(DATADIR)
+	install -d $(MANDIR)
+	install -m 755 $(SCRIPT) $(BINDIR)/ching
+	for f in $(DATA_FILES); do \
+		install -m 644 $$f $(DATADIR); \
+	done
+	install -m 644 $(MAN) $(MANDIR)
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${FILESDIR})
-	mkdir -p ${FILESDIR}
-.endif
-
-.include <bsd.prog.mk>
+clean:
+	@:

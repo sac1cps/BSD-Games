@@ -1,9 +1,6 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/trek/Makefile,v 1.1.1.1.14.1 2001/04/25 09:29:03 ru Exp $
-# $DragonFly: src/games/trek/Makefile,v 1.4 2006/10/08 16:22:36 pavalos Exp $
-
-PROG=	trek
-SRCS=	abandon.c attack.c autover.c capture.c check_out.c checkcond.c \
+# GNU make compatible Makefile for trek
+PROG = trek
+SRCS = abandon.c attack.c autover.c capture.c check_out.c checkcond.c \
 	compkl.c computer.c damage.c damaged.c dcrept.c destruct.c \
 	dock.c dumpgame.c dumpme.c dumpssradio.c events.c externs.c \
 	getcodi.c getpar.c help.c impulse.c initquad.c kill.c klmove.c \
@@ -11,17 +8,25 @@ SRCS=	abandon.c attack.c autover.c capture.c check_out.c checkcond.c \
 	ranf.c rest.c schedule.c score.c setup.c setwarp.c \
 	shield.c snova.c srscan.c systemname.c torped.c utility.c \
 	visual.c warp.c win.c cgetc.c
-MAN=	trek.6
-DPADD=	${LIBM}
-LDADD=	-lm
-HIDEGAME=hidegame
+OBJS = $(SRCS:.c=.o)
+MAN = trek.6
+CFLAGS += -O2
+LDLIBS += -lm
+BINDIR ?= /usr/local/bin
+MANDIR ?= /usr/local/man/man6
 
-beforeinstall:
-.if !exists(${BINDIR})
-	mkdir -p ${BINDIR}
-.endif
-.if !exists(${MANDIR}6)
-	mkdir -p ${MANDIR}6
-.endif
+.PHONY: all clean install
 
-.include <bsd.prog.mk>
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)

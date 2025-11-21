@@ -1,27 +1,25 @@
-#	@(#)Makefile	8.1 (Berkeley) 5/31/93
-# $FreeBSD: src/games/snake/snake/Makefile,v 1.5.2.3 2002/08/07 16:31:42 ru Exp $
-# $DragonFly: src/games/snake/snake/Makefile,v 1.5 2006/10/08 16:22:36 pavalos Exp $
+# GNU make compatible Makefile for snake
+PROG = snake
+SRCS = snake.c
+OBJS = $(SRCS:.c=.o)
+MAN = snake.6
+CFLAGS += -O2
+LDLIBS += -lm -lcurses
+BINDIR ?= /usr/local/bin
+MANDIR ?= /usr/local/man/man6
 
-PROG=	snake
-SRCS=	snake.c
-MAN=	snake.6
-DPADD=	${LIBM} ${LIBCURSES}
-LDADD=	-lm -lcurses
-HIDEGAME=hidegame
-MLINKS=	snake.6 snscore.6
+.PHONY: all clean install
 
-beforeinstall:
-.if !exists(${RPREFIX}/var/games)
-	mkdir -p ${VARDIR}
-.endif
-.if !exists(${VARDIR}/snakerawscores)
-	${INSTALL} -o ${BINOWN} -g ${BINGRP} -m 664 /dev/null \
-	    ${VARDIR}/snakerawscores
-.endif
-.if !exists(${VARDIR}/snake.log)
-	${INSTALL} -o ${BINOWN} -g ${BINGRP} -m 664 /dev/null \
-	    ${VARDIR}/snake.log
-.endif
+all: $(PROG)
 
-.include "../../Makefile.inc"
-.include <bsd.prog.mk>
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
+
+install: $(PROG)
+	install -d $(BINDIR)
+	install -d $(MANDIR)
+	install $(PROG) $(BINDIR)
+	install -m 644 $(MAN) $(MANDIR)
+
+clean:
+	rm -f $(PROG) $(OBJS)
