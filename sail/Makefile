@@ -1,4 +1,14 @@
 # GNU make compatible Makefile for sail
+ROOTDIR ?= $(shell d="$(CURDIR)"; \
+	while [ ! -f "$$d/compat.h" -a "$$d" != "/" ]; do \
+		d=$$(dirname "$$d"); \
+	done; \
+	echo $$d)
+ifneq ($(wildcard $(ROOTDIR)/compat.h),)
+CFLAGS += -include $(ROOTDIR)/compat.h
+CFLAGS += -fcommon
+endif
+
 PROG = sail
 SRCS = main.c pl_main.c pl_1.c pl_2.c pl_3.c pl_4.c pl_5.c pl_6.c pl_7.c \
 	dr_main.c dr_1.c dr_2.c dr_3.c dr_4.c dr_5.c lo_main.c \

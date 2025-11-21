@@ -1,4 +1,14 @@
 # GNU make compatible Makefile for snake
+ROOTDIR ?= $(shell d="$(CURDIR)"; \
+	while [ ! -f "$$d/compat.h" -a "$$d" != "/" ]; do \
+		d=$$(dirname "$$d"); \
+	done; \
+	echo $$d)
+ifneq ($(wildcard $(ROOTDIR)/compat.h),)
+CFLAGS += -include $(ROOTDIR)/compat.h
+CFLAGS += -fcommon
+endif
+
 PROG = snake
 SRCS = snake.c
 OBJS = $(SRCS:.c=.o)

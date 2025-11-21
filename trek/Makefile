@@ -1,4 +1,14 @@
 # GNU make compatible Makefile for trek
+ROOTDIR ?= $(shell d="$(CURDIR)"; \
+	while [ ! -f "$$d/compat.h" -a "$$d" != "/" ]; do \
+		d=$$(dirname "$$d"); \
+	done; \
+	echo $$d)
+ifneq ($(wildcard $(ROOTDIR)/compat.h),)
+CFLAGS += -include $(ROOTDIR)/compat.h
+CFLAGS += -fcommon
+endif
+
 PROG = trek
 SRCS = abandon.c attack.c autover.c capture.c check_out.c checkcond.c \
 	compkl.c computer.c damage.c damaged.c dcrept.c destruct.c \

@@ -1,10 +1,20 @@
 # GNU make compatible Makefile for phantasia
+ROOTDIR ?= $(shell d="$(CURDIR)"; \
+	while [ ! -f "$$d/compat.h" -a "$$d" != "/" ]; do \
+		d=$$(dirname "$$d"); \
+	done; \
+	echo $$d)
+ifneq ($(wildcard $(ROOTDIR)/compat.h),)
+CFLAGS += -include $(ROOTDIR)/compat.h
+CFLAGS += -fcommon
+endif
+
 PROG = phantasia
 SRCS = main.c fight.c io.c interplayer.c gamesupport.c misc.c phantglobs.c
 OBJS = $(SRCS:.c=.o)
 MAN = phantasia.6
 CFLAGS += -O2
-LDLIBS += -lm -lcurses -ltermcap
+LDLIBS += -lm -lcurses
 BINDIR ?= /usr/local/bin
 MANDIR ?= /usr/local/man/man6
 

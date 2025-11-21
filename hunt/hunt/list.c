@@ -17,7 +17,13 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#if defined(__has_include)
+#if __has_include(<sys/sockio.h>)
 #include <sys/sockio.h>
+#endif
+#else
+#include <sys/sockio.h>
+#endif
 #include <sys/ioctl.h>
 
 #include <netinet/in.h>
@@ -27,6 +33,16 @@
 
 #include "hunt.h"
 #include "list.h"
+
+#ifdef __linux__
+#define SET_SIN_LEN(s) do { } while (0)
+#define SOCKADDR_LEN(sa) \
+	(((sa)->sa_family == AF_INET) ? \
+	    sizeof(struct sockaddr_in) : sizeof(struct sockaddr))
+#else
+#define SET_SIN_LEN(s) ((s).sin_len = sizeof(s))
+#define SOCKADDR_LEN(sa) ((sa)->sa_len)
+#endif
 
 /* Wait at most 5 seconds for a reply */
 #define LIST_DELAY	5
@@ -115,12 +131,14 @@ next_driver_fd(int fd)
 	}
 	driver = &drivers[numdrivers];
 	len = sizeof driver->addr;
-	ret = recvfrom(s, &resp, sizeof resp, 0, &driver->addr, &len);
+	ret = recvfrom(s, &resp, sizeof resp, 0,
+	    (struct sockaddr *)(void *)&driver->addr, &len);
 	if (ret == -1)
 		goto again;
 	driver->response = ntohs(resp);
+	driver->addrlen = len;
 
-	switch (driver->addr.sa_family) {
+	switch (((struct sockaddr *)(void *)&driver->addr)->sa_family) {
 	case AF_INET:
 	case AF_INET6:
 		((struct sockaddr_in *)(void *)&driver->addr)->sin_port =
@@ -142,7 +160,7 @@ driver_name(struct driver *driver)
 
 	name = NULL;
 
-	if (driver->addr.sa_family == AF_INET) {
+	if (((struct sockaddr *)(void *)&driver->addr)->sa_family == AF_INET) {
 		sin = (struct sockaddr_in *)(void *)&driver->addr;
 		hp = gethostbyaddr(&sin->sin_addr, sizeof sin->sin_addr,
 		    AF_INET);
@@ -187,7 +205,7 @@ start_probe(struct sockaddr *addr, u_int16_t req)
 	}
 
 	msg = htons(req);
-	if (sendto(s, &msg, sizeof msg, 0, addr, addr->sa_len) == -1)
+	if (sendto(s, &msg, sizeof msg, 0, addr, SOCKADDR_LEN(addr)) == -1)
 		warn("sendto");
 	probe_sock[numprobes++] = s;
 
@@ -232,14 +250,14 @@ probe_drivers(u_int16_t req, char *preferred)
 
 		if (!target) {
 			sin.sin_family = AF_INET;
-			sin.sin_len = sizeof sin;
+			SET_SIN_LEN(sin);
 			if (inet_pton(AF_INET, preferred, &sin.sin_addr) == 1)
 				target = &sin;
 		}
 
 		if (!target && (he = gethostbyname(preferred)) != NULL) {
 			sin.sin_family = he->h_addrtype;
-			sin.sin_len = sizeof sin;
+			SET_SIN_LEN(sin);
 			memcpy(&sin.sin_addr, he->h_addr, he->h_length);
 			target = &sin;
 		}
@@ -253,7 +271,7 @@ probe_drivers(u_int16_t req, char *preferred)
 
 	/* Send a query to the local machine: */
 	localhost.sin_family = AF_INET;
-	localhost.sin_len = sizeof localhost;
+	SET_SIN_LEN(localhost);
 	localhost.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 	start_probe((struct sockaddr *)&localhost, req);
 
@@ -277,9 +295,13 @@ probe_drivers(u_int16_t req, char *preferred)
         ifr = ifc.ifc_req;
         for (i = 0; i < ifc.ifc_len;
              i += len, ifr = (struct ifreq *)(void *)((caddr_t)ifr + len)) {
+#ifdef __linux__
+                len = sizeof(struct ifreq);
+#else
                 len = sizeof(ifr->ifr_name) +
                       (ifr->ifr_addr.sa_len > sizeof(struct sockaddr) ?
                        ifr->ifr_addr.sa_len : sizeof(struct sockaddr));
+#endif
 
 		if (ifr->ifr_addr.sa_family != AF_INET)
 			continue;

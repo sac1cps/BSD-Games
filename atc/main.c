@@ -45,6 +45,7 @@
  */
 
 #include <stdlib.h>
+#include <time.h>
 #include "include.h"
 #include "pathnames.h"
 

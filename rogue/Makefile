@@ -1,4 +1,14 @@
 # GNU make compatible Makefile for rogue
+ROOTDIR ?= $(shell d="$(CURDIR)"; \
+	while [ ! -f "$$d/compat.h" -a "$$d" != "/" ]; do \
+		d=$$(dirname "$$d"); \
+	done; \
+	echo $$d)
+ifneq ($(wildcard $(ROOTDIR)/compat.h),)
+CFLAGS += -include $(ROOTDIR)/compat.h
+CFLAGS += -fcommon
+endif
+
 PROG = rogue
 SRCS = hit.c init.c inventory.c level.c machdep.c main.c \
 	message.c monster.c move.c object.c pack.c play.c random.c ring.c \

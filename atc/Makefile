@@ -1,4 +1,14 @@
 # Makefile for atc
+ROOTDIR ?= $(shell d="$(CURDIR)"; \
+	while [ ! -f "$$d/compat.h" -a "$$d" != "/" ]; do \
+		d=$$(dirname "$$d"); \
+	done; \
+	echo $$d)
+ifneq ($(wildcard $(ROOTDIR)/compat.h),)
+CFLAGS += -include $(ROOTDIR)/compat.h
+CFLAGS += -fcommon
+endif
+
 
 PROG=atc
 SRCS=extern.c graphics.c input.c list.c log.c main.c tunable.c update.c
@@ -6,7 +16,7 @@ MAN=atc.6
 OBJS=$(SRCS:.c=.o) grammar.o lex.o
 
 CFLAGS+=-O2 -I.
-LDFLAGS=-ll -lm -lcurses
+LDFLAGS=-lfl -lm -lcurses
 BINDIR?=/usr/local/bin
 MANDIR?=/usr/local/man/man6
 SHAREDIR?=/usr/local/share
@@ -26,10 +36,10 @@ lex.o: lex.c y.tab.h
 	$(CC) $(CFLAGS) -c lex.c
 
 y.tab.h: grammar.y
-	/opt/homebrew/opt/bison/bin/bison -d -o y.tab.c grammar.y
+	bison -d -o y.tab.c grammar.y
 
 grammar.c: grammar.y
-	/opt/homebrew/opt/bison/bin/bison -o grammar.c grammar.y
+	bison -o grammar.c grammar.y
 
 grammar.o: grammar.c
 	$(CC) $(CFLAGS) -c grammar.c

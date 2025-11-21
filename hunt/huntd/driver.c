@@ -323,7 +323,7 @@ init(void)
 {
 	int	i;
 	struct sockaddr_in	test_port;
-	int	true = 1;
+	int	reuse = 1;
 	socklen_t	len;
 	struct sockaddr_in	addr;
 	struct sigaction	sact;
@@ -352,10 +352,12 @@ init(void)
 	if (sigaction(SIGTERM, &sact, NULL) == -1)
 		err(1, "sigaction SIGTERM");
 
+#ifdef SIGINFO
 	/* Handle INFO: */
 	sact.sa_handler = siginfo;
 	if (sigaction(SIGINFO, &sact, NULL) == -1)
 		err(1, "sigaction SIGINFO");
+#endif
 
 	if (chdir("/") == -1)
 		warn("chdir");
@@ -441,8 +443,8 @@ init(void)
 		Server_socket = socket(AF_INET, SOCK_DGRAM, 0);
 
 		/* Permit multiple huntd's on the same port. */
-		if (setsockopt(Server_socket, SOL_SOCKET, SO_REUSEPORT, &true,
-		    sizeof true) < 0)
+		if (setsockopt(Server_socket, SOL_SOCKET, SO_REUSEPORT, &reuse,
+		    sizeof reuse) < 0)
 			logit(LOG_ERR, "setsockopt SO_REUSEADDR");
 
 		if (bind(Server_socket, (struct sockaddr *) &test_port,

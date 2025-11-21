@@ -33,12 +33,21 @@
  */
 
 #include <errno.h>
+#include <limits.h>
 #include <sys/param.h>
 #include <sys/signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#ifndef MAXLOGNAME
+#ifdef LOGIN_NAME_MAX
+#define MAXLOGNAME LOGIN_NAME_MAX
+#else
+#define MAXLOGNAME 256
+#endif
+#endif
 
 #define BITS (8)
 

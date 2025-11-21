@@ -48,7 +48,13 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#if defined(__has_include)
+#if __has_include(<sys/sockio.h>)
 #include <sys/sockio.h>
+#endif
+#else
+#include <sys/sockio.h>
+#endif
 
 #include <netinet/in.h>
 #include <net/if.h>
@@ -74,7 +80,8 @@ static char	*Sock_host;
 static char	*use_port;
 static FLAG	Query_driver = FALSE;
 static FLAG	Show_scores = FALSE;
-static struct sockaddr	Daemon;
+static struct sockaddr_storage	Daemon;
+static socklen_t	Daemon_len;
 
 
 static char	name[NAMELEN];
@@ -209,7 +216,7 @@ main(int ac, char **av)
 	(void) signal(SIGTERM, sigterm);
 	/* (void) signal(SIGPIPE, SIG_IGN); */
 
-	Daemon.sa_len = 0;
+	Daemon_len = 0;
     ask_driver:
 	while (!find_driver()) {
 		if (Am_monitor) {
@@ -230,17 +237,20 @@ main(int ac, char **av)
 		if (Socket != -1)
 			close(Socket);
 
-		Socket = socket(Daemon.sa_family, SOCK_STREAM, 0);
+		Socket = socket(((struct sockaddr *)&Daemon)->sa_family,
+		    SOCK_STREAM, 0);
 		if (Socket < 0)
 			leave(1, "socket");
 
 		option = 1;
+#ifdef SO_USELOOPBACK
 		if (setsockopt(Socket, SOL_SOCKET, SO_USELOOPBACK,
 		    &option, sizeof option) < 0)
 			warn("setsockopt loopback");
+#endif
 
 		errno = 0;
-		if (connect(Socket, &Daemon, Daemon.sa_len) == -1)  {
+		if (connect(Socket, (struct sockaddr *)&Daemon, Daemon_len) == -1)  {
 			if (errno == ECONNREFUSED)
 				goto ask_driver;
 			leave(1, "connect");
@@ -330,8 +340,9 @@ find_driver(void)
 		}
 
 		/* Mark the last driver we used with an asterisk */
-		is_current = (last_driver == -1 && Daemon.sa_len != 0 &&
-		    memcmp(&Daemon, &driver->addr, Daemon.sa_len) == 0);
+		is_current = (last_driver == -1 && Daemon_len != 0 &&
+		    Daemon_len == driver->addrlen &&
+		    memcmp(&Daemon, &driver->addr, Daemon_len) == 0);
 		if (is_current)
 			last_driver = numdrivers;
 
@@ -363,6 +374,7 @@ find_driver(void)
 
 	display_clear_the_screen();
 	Daemon = driver->addr;
+	Daemon_len = driver->addrlen;
 
 	probe_cleanup();
 	return 1;		/* Success */
@@ -380,11 +392,13 @@ dump_scores(void)
 		printf("\n%s:\n", driver_name(driver));
 		fflush(stdout);
 
-		if ((s = socket(driver->addr.sa_family, SOCK_STREAM, 0)) < 0) {
+		if ((s = socket(((struct sockaddr *)&driver->addr)->sa_family,
+		    SOCK_STREAM, 0)) < 0) {
 			warn("socket");
 			continue;
 		}
-		if (connect(s, &driver->addr, driver->addr.sa_len) < 0) {
+		if (connect(s, (struct sockaddr *)&driver->addr,
+		    driver->addrlen) < 0) {
 			warn("connect");
 			close(s);
 			continue;

@@ -5,8 +5,12 @@
  * $DragonFly: src/games/hunt/hunt/list.h,v 1.1 2008/09/02 21:50:20 dillon Exp $
  */
 
+#include <sys/socket.h>
+#include <sys/types.h>
+
 struct driver {
-	struct sockaddr addr;
+	struct sockaddr_storage addr;
+	socklen_t	addrlen;
 	u_int16_t	response;
 	int		once;
 };

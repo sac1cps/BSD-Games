@@ -44,6 +44,8 @@
  */
 
 #include <sys/stat.h>
+#include <sys/file.h>
+#include <time.h>
 #include <err.h>
 
 #include "include.h"

@@ -1,4 +1,14 @@
 # Makefile for hangman
+ROOTDIR ?= $(shell d="$(CURDIR)"; \
+	while [ ! -f "$$d/compat.h" -a "$$d" != "/" ]; do \
+		d=$$(dirname "$$d"); \
+	done; \
+	echo $$d)
+ifneq ($(wildcard $(ROOTDIR)/compat.h),)
+CFLAGS += -include $(ROOTDIR)/compat.h
+CFLAGS += -fcommon
+endif
+
 
 PROG=hangman
 SRCS=endgame.c extern.c getguess.c getword.c main.c playgame.c prdata.c prman.c prword.c setup.c

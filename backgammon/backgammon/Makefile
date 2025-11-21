@@ -1,4 +1,14 @@
 # GNU make compatible Makefile for backgammon
+ROOTDIR ?= $(shell d="$(CURDIR)"; \
+	while [ ! -f "$$d/compat.h" -a "$$d" != "/" ]; do \
+		d=$$(dirname "$$d"); \
+	done; \
+	echo $$d)
+ifneq ($(wildcard $(ROOTDIR)/compat.h),)
+CFLAGS += -include $(ROOTDIR)/compat.h
+CFLAGS += -fcommon
+endif
+
 VPATH = ../common_source
 
 PROG = backgammon
@@ -7,7 +17,7 @@ SRCS = allow.c board.c check.c extra.c fancy.c init.c main.c move.c \
 OBJS = $(SRCS:.c=.o)
 MAN = backgammon.6
 CFLAGS += -O2 -I../common_source
-LDLIBS += -ltermcap
+LDLIBS += -lcurses
 BINDIR ?= /usr/local/bin
 MANDIR ?= /usr/local/man/man6
 

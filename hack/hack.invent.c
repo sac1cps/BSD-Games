@@ -507,7 +507,7 @@ ggetobj(const char *word, int (*fn)(struct obj *), int max)
 	#pragma clang diagnostic ignored "-Wstrict-prototypes"
 	#endif
 
-	bool (*ckfn)(struct obj *) = (bool (*)()) 0;
+	bool (*ckfn)(struct obj *) = NULL;
 
 	#if __has_warning("-Wstrict-prototypes")
 	#pragma clang diagnostic pop

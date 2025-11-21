@@ -1,4 +1,14 @@
 # Makefile for dab
+ROOTDIR ?= $(shell d="$(CURDIR)"; \
+	while [ ! -f "$$d/compat.h" -a "$$d" != "/" ]; do \
+		d=$$(dirname "$$d"); \
+	done; \
+	echo $$d)
+ifneq ($(wildcard $(ROOTDIR)/compat.h),)
+CFLAGS += -include $(ROOTDIR)/compat.h
+CFLAGS += -fcommon
+endif
+
 
 PROG=dab
 SRCS=algor.cc board.cc main.cc human.cc box.cc player.cc gamescreen.cc ttyscrn.cc random.cc
@@ -7,7 +17,7 @@ OBJS=$(SRCS:.cc=.o)
 
 CXX=g++
 CXXFLAGS+=-O2 -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1
-LDFLAGS=-lcurses -ltermcap -lm
+LDFLAGS=-lcurses -lm
 BINDIR?=/usr/local/bin
 MANDIR?=/usr/local/man/man6
 

@@ -34,6 +34,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#ifndef OXTABS
+#define OXTABS XTABS
+#endif
+
 #define rnum(r)	(random()%r)
 #define D0	dice[0]
 #define D1	dice[1]
